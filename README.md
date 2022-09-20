@@ -24,7 +24,7 @@ sequenceDiagram
     participant yaoya
     participant negicloud
     slack->>yaoya: \attach_role {ROLE} {@person}
-    yaoya->>negicloud: Add user to administrators
+    yaoya->>negicloud: Add user to {ROLE}
     Note right of yaoya: Requested user is administrator
     yaoya->>slack: done!
 ```
