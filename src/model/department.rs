@@ -16,6 +16,7 @@ pub enum Department {
     Sok,
     Dan,
     Ss,
+    Sg,
 }
 
 impl TryFrom<&str> for Department {
@@ -33,6 +34,7 @@ impl TryFrom<&str> for Department {
             "sok" => Ok(Department::Sok),
             "dan" => Ok(Department::Dan),
             "ss" => Ok(Department::Ss),
+            "sg" => Ok(Department::Sg),
             _ => Err(DepartmentError::Unkown),
         }
     }
@@ -49,6 +51,7 @@ impl std::fmt::Display for Department {
             Department::Sok => write!(f, "sok"),
             Department::Dan => write!(f, "dan"),
             Department::Ss => write!(f, "ss"),
+            Department::Sg => write!(f, "sg"),
         }
     }
 }
