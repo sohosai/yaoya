@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 thiserror="1"
 email_address = "0.2.3"
+rand = "0.8.5"
