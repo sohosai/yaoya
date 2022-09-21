@@ -32,3 +32,27 @@ impl TryFrom<&str> for UniversityEmailAddress {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn valid_university_address() {
+        assert!(UniversityEmailAddress::try_from("s1111111@s.tsukuba.ac.jp").is_ok());
+    }
+
+    #[test]
+    fn valid_non_university_address() {
+        assert!(UniversityEmailAddress::try_from("me@yuseiito.com").is_err());
+    }
+
+    #[test]
+    fn invalid_email_address() {
+        assert!(UniversityEmailAddress::try_from("thisTextIsNotEmailAddress").is_err())
+    }
+
+    #[test]
+    fn valid_university_address_with_uppercase() {
+        assert!(UniversityEmailAddress::try_from("S1111111@S.TSUKUBA.AC.JP").is_ok());
+    }
+}
