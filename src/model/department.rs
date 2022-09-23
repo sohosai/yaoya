@@ -17,6 +17,7 @@ pub enum Department {
     Dan,
     Ss,
     Sg,
+    Zai,
 }
 
 impl TryFrom<&str> for Department {
@@ -35,6 +36,7 @@ impl TryFrom<&str> for Department {
             "dan" => Ok(Department::Dan),
             "ss" => Ok(Department::Ss),
             "sg" => Ok(Department::Sg),
+            "zai" => Ok(Department::Zai),
             _ => Err(DepartmentError::Unkown),
         }
     }
@@ -52,6 +54,7 @@ impl std::fmt::Display for Department {
             Department::Dan => write!(f, "dan"),
             Department::Ss => write!(f, "ss"),
             Department::Sg => write!(f, "sg"),
+            Department::Zai => write!(f, "zai"),
         }
     }
 }
@@ -70,6 +73,8 @@ mod tests {
         assert!(Department::try_from("sok").is_ok());
         assert!(Department::try_from("dan").is_ok());
         assert!(Department::try_from("ss").is_ok());
+        assert!(Department::try_from("sg").is_ok());
+        assert!(Department::try_from("zai").is_ok());
     }
 
     #[test]
