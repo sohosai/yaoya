@@ -27,7 +27,7 @@ sequenceDiagram
         slack ->> yaoya: No
         yaoya ->> slack: Tell me your correct department/year/name
         slack ->> yaoya: department/year/name
-        yaoya ->> Your correct username is XXXXXXXX. Fix and try again.
+        yaoya ->> slack: Your correct username is XXXXXXXX. Fix and try again.
     end
     yaoya->>negicloud: create user
     yaoya->>slack: default password
