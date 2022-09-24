@@ -1,27 +1,15 @@
 mod words;
-use rand::prelude::*;
-use words::SOHOSAISH_WORDS;
+use rand::Rng;
 
 pub fn generate() -> String {
+    let mut phrases = Vec::<String>::with_capacity(5);
     let mut rng = rand::thread_rng();
-    let mut passphrase = String::new();
-    for _ in 0..6 {
-        let word = SOHOSAISH_WORDS.choose(&mut rng).unwrap();
-        passphrase.push_str(word);
-        passphrase.push('-');
-    }
-    passphrase.pop();
-    passphrase
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_generate() {
-        let passphrase = generate();
-        println!("Passphrase is {}", passphrase);
-        assert!(passphrase.len() > 10);
+    for _ in 0..5 {
+        let i: usize = rng.gen_range(0..words::SOHOSAISH_WORDS.len());
+        let word = words::SOHOSAISH_WORDS[i];
+        phrases.push(word.to_string());
     }
+
+    phrases.join("-")
 }

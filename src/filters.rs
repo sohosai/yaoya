@@ -24,3 +24,11 @@ fn interactive_components(
         .and(warp::body::form())
         .and_then(move |_, body| handlers::handle_interactive_components(body, config.clone()))
 }
+
+pub fn filter(
+    config: &Config,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    signup_command(config.clone())
+        .or(interactive_components(config.clone()))
+        .with(warp::log("INFO"))
+}
