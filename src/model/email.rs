@@ -33,6 +33,12 @@ impl TryFrom<&str> for UniversityEmailAddress {
     }
 }
 
+impl ToString for UniversityEmailAddress {
+    fn to_string(&self) -> String {
+        self.email.to_string()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

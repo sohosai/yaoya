@@ -1,16 +1,7 @@
 use crate::model::Config;
-use super::model::Profile;
+use super::model::{Profile,Error};
 
-use thiserror::Error;
-#[derive(Debug, Error)]
-pub enum SlackError{
-    #[error("Error while sending requewst {0}")] 
-    RequestError(#[from] reqwest::Error),
-    #[error("Error while parsing response {0}")]
-    ParseError(#[from] serde_urlencoded::de::Error)
-}
-
-pub async fn get_profile(user: &str,config: &Config) -> Result<Profile, SlackError> {
+pub async fn get_profile(user: &str,config: &Config) -> Result<Profile, Error> {
     let client = reqwest::Client::new();
     let url = format!("https://slack.com/api/users.profile.get?user={}", user);
     let response = client
