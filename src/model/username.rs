@@ -60,7 +60,7 @@ impl TryFrom<&str> for Username {
 
         let given_name = value[2 + department.to_string().len() + family_name.len()..].to_string();
 
-        if family_name.len() == 0 || given_name.len() == 0 {
+        if family_name.is_empty() || given_name.is_empty() {
             return Err(UsernameError::Malformed(
                 year,
                 department,
@@ -128,7 +128,7 @@ mod tests {
                 21,
                 Department::Jsys,
                 "Itoyusei".to_string(),
-                format!("")
+                String::new()
             ))
         );
     }

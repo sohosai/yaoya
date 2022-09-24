@@ -81,7 +81,7 @@ fn compute_signature(
 ) -> Result<String, SignatureVerificationError> {
     let timestamp_int = match timestamp.parse::<i64>() {
         Ok(timestamp_int) => timestamp_int,
-        Err(e) => {
+        Err(_e) => {
             return {
                 error!("Too old signature given. Someone is trying to replay the request.");
                 Err(SignatureVerificationError::InvalidSignature)
