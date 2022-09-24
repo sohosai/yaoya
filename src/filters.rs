@@ -12,7 +12,7 @@ fn signup_command(
         .and(warp::path("signup"))
         .and(with_verify(config.clone()))
         .and(warp::body::form())
-        .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
+        .and_then(move |_, body| handlers::handle_interactive_components(body, config.clone()))
 }
 
 fn interactive_components(
@@ -22,5 +22,5 @@ fn interactive_components(
         .and(warp::path("interactive-components"))
         .and(with_verify(config.clone()))
         .and(warp::body::form())
-        .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
+        .and_then(move |_, body| handlers::handle_interactive_components(body, config.clone()))
 }
