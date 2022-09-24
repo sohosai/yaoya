@@ -30,10 +30,10 @@ pub async fn handle_slash_commands(
         }
     };
 
-    let result = match input.command().as_str() {
+    let result = match input.command.as_str() {
         "signup" => signup(&input, &config).await,
         _ => {
-            error!("Unknown command: {}", input.command());
+            error!("Unknown command: {}", input.command);
             return Ok(warp::reply::with_status(
                 warp::reply::json(&SimpleResponse {
                     text: "Unknown command".to_string(),

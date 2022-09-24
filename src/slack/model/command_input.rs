@@ -8,15 +8,15 @@ pub enum CommandInputError {
 }
 
 pub struct CommandInput {
-    token: String,
-    command: String,
-    text: String,
-    response_url: String,
-    trigger_id: String,
-    user_id: String,
-    user_name: String,
-    channel_id: String,
-    api_app_id: String,
+    pub token: String,
+    pub command: String,
+    pub text: String,
+    pub response_url: String,
+    pub trigger_id: String,
+    pub user_id: String,
+    pub user_name: String,
+    pub channel_id: String,
+    pub api_app_id: String,
 }
 
 impl TryFrom<HashMap<String, String>> for CommandInput {
@@ -33,16 +33,6 @@ impl TryFrom<HashMap<String, String>> for CommandInput {
             channel_id: get_field(&map, "channel_id")?,
             api_app_id: get_field(&map, "api_app_id")?,
         })
-    }
-}
-
-impl CommandInput {
-    pub fn command(&self) -> String {
-        self.command.to_string()
-    }
-
-    pub fn text(&self) -> String {
-        self.text.to_string()
     }
 }
 
