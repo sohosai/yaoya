@@ -14,9 +14,22 @@ struct SimpleResponse {
 }
 
 pub async fn handle_slash_commands(
-    body: HashMap<String, String>,
+    body: String,
     config: Config,
 ) -> Result<impl warp::Reply, Infallible> {
+    let body = match serde_urlencoded::from_str::<HashMap<String, String>>(&body) {
+        Ok(body) => body,
+        Err(e) => {
+            error!("Failed to parse body: {}", e);
+            return Ok(warp::reply::with_status(
+                warp::reply::json(&SimpleResponse {
+                    text: "Error parsing request body".to_string(),
+                }),
+                StatusCode::BAD_REQUEST,
+            ));
+        }
+    };
+
     let input: CommandInput = match body.try_into() {
         Ok(input) => input,
         Err(e) => {
@@ -31,7 +44,7 @@ pub async fn handle_slash_commands(
     };
 
     let result = match input.command.as_str() {
-        "signup" => signup(&input, &config).await,
+        "/signup" => signup(&input, &config).await,
         _ => {
             error!("Unknown command: {}", input.command);
             return Ok(warp::reply::with_status(

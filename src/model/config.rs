@@ -6,5 +6,6 @@ pub struct Config {
     pub slack_bot_token: String,
     pub sendgrid_token: String,
     pub my_baseurl: String,
-    pub verify_salt: String
+    pub verify_salt: String,
+    pub email_from: String,
 }

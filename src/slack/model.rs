@@ -6,3 +6,6 @@ pub use profile::Profile;
 
 mod error;
 pub use error::Error;
+
+pub mod message;
+pub use message::Message;
