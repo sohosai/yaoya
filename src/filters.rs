@@ -22,7 +22,7 @@ fn interactive_components(
     post()
         .and(warp::path("interactivity"))
         .and(with_verify(config.clone()))
-        .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
+        .and_then(move |body| handlers::handle_interactivity(body, config.clone()))
 }
 
 pub fn verify_email(
