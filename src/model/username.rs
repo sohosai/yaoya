@@ -2,7 +2,7 @@ use super::department::{Department, DepartmentError};
 use thiserror::Error;
 
 #[derive(Error, Debug, Eq, PartialEq)]
-enum UsernameError {
+pub enum UsernameError {
     #[error("Username doesn't start with the year digits")]
     MissingYear,
     #[error("Username implies unknown department")]
@@ -16,11 +16,11 @@ enum UsernameError {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct Username {
-    year: u8,
-    department: Department,
-    family_name: String,
-    given_name: String,
+pub struct Username {
+    pub year: u8,
+    pub department: Department,
+    pub family_name: String,
+    pub given_name: String,
 }
 
 const UPPER_LETTERS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
