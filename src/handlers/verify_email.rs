@@ -91,7 +91,7 @@ pub fn username_error_to_error_message(
         UsernameError::UnknownDepartment(d)=> format!("氏名「{}」に規定外の局/組織名「{}」が含まれています。",params.real_name,d)
     };
 
-    return Message::Text(text);
+    Message::Text(text)
 }
 
 pub fn username_to_confirmation_message(
@@ -139,7 +139,7 @@ pub fn username_to_confirmation_message(
                     text: Text::PlainText {
                         text: "確認して続ける".to_string(),
                     },
-                    value: value.clone(),
+                    value,
                     style: Some(ButtonStyle::Primary),
                 },
             ],
