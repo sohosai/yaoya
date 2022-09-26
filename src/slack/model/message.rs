@@ -1,32 +1,20 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(tag = "type")]
+#[serde(untagged)]
 pub enum Message {
-    #[serde(rename = "text")]
-    Text {
-        text: String,
-        token: String,
-        channel: String,
-    },
+    Text(String),
     #[serde(rename = "block")]
-    Blocks {
-        blocks: Vec<Block>,
-        token: String,
-        channel: String,
-    },
+    Blocks(Vec<Block>),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum Block {
     #[serde(rename = "section")]
-    Section {
-        text: Text,
-    },
-    Actions {
-        elements: Vec<ActionElement>,
-    },
+    Section { text: Text },
+    #[serde(rename = "actions")]
+    Actions { elements: Vec<ActionElement> },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -37,10 +25,20 @@ pub enum ActionElement {
         action_id: String,
         text: Text,
         value: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        style: Option<ButtonStyle>,
     },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "snake_case")]
+pub enum ButtonStyle {
+    Primary,
+    Danger,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = "type")]
 pub enum Text {
     #[serde(rename = "plain_text")]
     PlainText { text: String },
