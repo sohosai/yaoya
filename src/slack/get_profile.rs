@@ -31,8 +31,6 @@ pub async fn get_profile(user: &str, config: &Config) -> Result<Profile, Error> 
 
     let text = response.text().await?;
 
-    info!("{}", text);
-
     let response = serde_json::from_str::<ProfileResponse>(&text)?;
     if !response.ok {
         error!("Slack api returned error: {}", response.error.unwrap());
