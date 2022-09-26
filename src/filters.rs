@@ -11,8 +11,7 @@ fn signup_command(
     post()
         .and(warp::path("signup"))
         .and(with_verify(config.clone()))
-        .and(warp::body::form())
-        .and_then(move |_, body| handlers::handle_interactive_components(body, config.clone()))
+        .and_then(move |body| handlers::handle_slash_commands(body, config.clone()))
 }
 
 fn interactive_components(
@@ -21,8 +20,7 @@ fn interactive_components(
     post()
         .and(warp::path("interactive-components"))
         .and(with_verify(config.clone()))
-        .and(warp::body::form())
-        .and_then(move |_, body| handlers::handle_interactive_components(body, config.clone()))
+        .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
 }
 
 pub fn filter(

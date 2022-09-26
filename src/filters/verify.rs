@@ -4,7 +4,7 @@ use hmac_sha256::HMAC;
 use thiserror::Error;
 use warp::Filter;
 
-pub fn with_verify(config: Config) -> warp::filters::BoxedFilter<((),)> {
+pub fn with_verify(config: Config) -> warp::filters::BoxedFilter<(String,)> {
     warp::header::headers_cloned()
         .and(warp::body::bytes())
         .and_then(move |headers, body| verify(headers, body, config.clone()))
@@ -35,18 +35,18 @@ async fn verify(
     headers: warp::http::HeaderMap<warp::http::HeaderValue>,
     body: bytes::Bytes,
     config: Config,
-) -> Result<(), warp::Rejection> {
+) -> Result<String, warp::Rejection> {
     let header_values = match extract_signature_headers(&headers) {
         Ok(header_values) => header_values,
         Err(e) => return Err(warp::reject::custom(e)),
     };
 
     let timestamp = header_values.x_slack_request_timestamp;
-    let computed_signature = match compute_signature(&timestamp, body, &config.slack_signing_secret)
-    {
-        Ok(computed_signature) => computed_signature,
-        Err(e) => return Err(warp::reject::custom(e)),
-    };
+    let computed_signature =
+        match compute_signature(&timestamp, body.clone(), &config.slack_signing_secret) {
+            Ok(computed_signature) => computed_signature,
+            Err(e) => return Err(warp::reject::custom(e)),
+        };
 
     let signature = header_values.x_slack_signature;
 
@@ -55,7 +55,13 @@ async fn verify(
             SignatureVerificationError::InvalidSignature,
         ));
     }
-    Ok(())
+
+    let body_str = String::from_utf8(body.to_vec()).map_err(|_| {
+        error!("Cannot stringify request body");
+        warp::reject::custom(SignatureVerificationError::ParseError)
+    })?;
+
+    Ok(body_str)
 }
 
 fn extract_signature_headers(

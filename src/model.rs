@@ -2,6 +2,6 @@ mod config;
 pub use config::Config;
 
 mod department;
-mod email;
-mod passphrase;
-mod username;
+pub mod email;
+pub mod passphrase;
+pub mod username;
