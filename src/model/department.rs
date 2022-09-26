@@ -59,6 +59,23 @@ impl std::fmt::Display for Department {
     }
 }
 
+impl Department {
+    pub fn to_japanese(self) -> &'static str {
+        match self {
+            Department::Som => "総務局",
+            Department::Jsys => "情報メディアシステム局",
+            Department::Honki => "本部企画局",
+            Department::Kosen => "広報宣伝局",
+            Department::Stage => "ステージ管理局",
+            Department::Sok => "総合計画局",
+            Department::Dan => "委員長団",
+            Department::Ss => "推進局",
+            Department::Sg => "渉外局",
+            Department::Zai => "財務局",
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
