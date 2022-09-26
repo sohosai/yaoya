@@ -31,6 +31,7 @@ enum EmailSourceType {
 pub async fn signup(input: &CommandInput, config: &Config) -> Result<impl Serialize, SignupError> {
     info!("Signup command invoked");
 
+    let user = get_profile(&input.user_id, config).await?;
     let email = input.text.trim();
     let (email,source) = match UniversityEmailAddress::try_from(email){
         Ok(email) => (email,EmailSourceType::Argument),
@@ -38,7 +39,7 @@ pub async fn signup(input: &CommandInput, config: &Config) -> Result<impl Serial
         Err(UniveristyEmailAddressError::MalformedEMailAdderess(_)) => {
         // Input is none or malformed.
             info!("Email is not given in argument. Fallback to the registerd email address.");
-            let user = get_profile(&input.user_id, config).await?;
+
             match UniversityEmailAddress::try_from(user.email.as_str()){
                 Ok(email) => (email,EmailSourceType::Registerd),
                 Err(UniveristyEmailAddressError::IsNotUniversityEmail) => return Ok("Slackに登録されたメールアドレスはsアドではありません。`/signup sXXXXXXX@s.tsukuba.ac.jp` のようにしてご自身のsアドを指定してください。".to_string()),
@@ -50,7 +51,9 @@ pub async fn signup(input: &CommandInput, config: &Config) -> Result<impl Serial
         },
     };
 
-    if let Err(e) = send_verification_email(config, &email.to_string()).await {
+    if let Err(e) =
+        send_verification_email(config, &email.to_string(), &user.real_name, &input.user_id).await
+    {
         error!("Failed to send verification email: {}", e);
         return Ok("メールアドレスの確認メールの送信に失敗しました。しばらくしてからもう一度お試しください。繰り返し試してもうまくいかない場合は、情報メディアシステム局までお尋ねください。".to_string());
     }
@@ -69,13 +72,18 @@ pub async fn signup(input: &CommandInput, config: &Config) -> Result<impl Serial
     Ok(response)
 }
 
-pub async fn send_verification_email(config: &Config, email: &str) -> Result<(), SendgridError> {
+pub async fn send_verification_email(
+    config: &Config,
+    email: &str,
+    real_name: &str,
+    user_id: &str,
+) -> Result<(), SendgridError> {
     let iat = Utc::now().timestamp().to_string();
     let token_basestring = format!("{}-{}-{}", iat, email, config.verify_salt);
     let token = hmac_sha256::Hash::hash(token_basestring.as_bytes());
     let token = hex::encode(token);
 
-    let mail_content = format!("negicloudご利用者様\n 日頃よりnegicloudご利用いただきありがとうございます。以下のリンクに移動して、メールアドレスを確認してください。\n {}verify?token={}&email={}&iat={}",config.my_baseurl,token,email,iat);
+    let mail_content = format!("negicloudご利用者様\n 日頃よりnegicloudご利用いただきありがとうございます。以下のリンクに移動して、メールアドレスを確認してください。\n {}verify?token={}&email={}&iat={}&user_id={},real_name={}",config.my_baseurl,token,email,iat,user_id,real_name);
     let mail = Mail::new()
         .add_from(&config.email_from)
         .add_text(&mail_content)
