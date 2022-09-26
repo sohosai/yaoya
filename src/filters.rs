@@ -20,7 +20,7 @@ fn interactive_components(
     config: Config,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     post()
-        .and(warp::path("interactive-components"))
+        .and(warp::path("interactivity"))
         .and(with_verify(config.clone()))
         .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
 }
