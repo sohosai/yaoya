@@ -18,8 +18,8 @@ pub enum SignupError {
     SlackError(#[from] crate::slack::model::Error),
 }
 
-impl Into<warp::http::StatusCode> for SignupError {
-    fn into(self) -> warp::http::StatusCode {
+impl From<SignupError> for warp::http::StatusCode{
+    fn from(_: SignupError) -> warp::http::StatusCode {
         warp::http::StatusCode::INTERNAL_SERVER_ERROR
     }
 }
