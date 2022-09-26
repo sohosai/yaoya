@@ -2,8 +2,8 @@ mod verify;
 use crate::handlers;
 use crate::model::Config;
 use verify::with_verify;
-use warp::{post,get};
 use warp::Filter;
+use warp::{get, post};
 
 use handlers::EmailVerificationOptions;
 
@@ -25,12 +25,13 @@ fn interactive_components(
         .and_then(move |body| handlers::handle_interactive_components(body, config.clone()))
 }
 
-pub fn verify_email(config: Config)-> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-
-get()
-.and(warp::path("verify"))
-.and(warp::query::<EmailVerificationOptions>())
-.and_then(move |query| handlers::verify_email(query, config.clone()))
+pub fn verify_email(
+    config: Config,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    get()
+        .and(warp::path("verify"))
+        .and(warp::query::<EmailVerificationOptions>())
+        .and_then(move |query| handlers::verify_email(query, config.clone()))
 }
 
 pub fn filter(
