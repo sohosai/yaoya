@@ -6,3 +6,4 @@ pub use handle_interactivity::handle_interactivity;
 
 mod verify_email;
 pub use verify_email::verify_email;
+pub use verify_email::EmailVerificationOptions;
