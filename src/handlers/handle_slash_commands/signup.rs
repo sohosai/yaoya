@@ -50,7 +50,7 @@ pub async fn signup(input: &CommandInput, config: &Config) -> Result<impl Serial
         },
     };
 
-    if let Err(e) = send_verification_email(&config, &email.to_string()).await {
+    if let Err(e) = send_verification_email(config, &email.to_string()).await {
         error!("Failed to send verification email: {}", e);
         return Ok("メールアドレスの確認メールの送信に失敗しました。しばらくしてからもう一度お試しください。繰り返し試してもうまくいかない場合は、情報メディアシステム局までお尋ねください。".to_string());
     }
