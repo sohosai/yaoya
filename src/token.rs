@@ -14,7 +14,7 @@ pub fn verify_token(token: &str,iat:u64,email:&str,config: &Config)-> Result<(),
 
  let expire_at = Utc.timestamp(iat as i64, 0) + chrono::Duration::minutes(5);
 
- if expire_at.timestamp() > Utc::now().timestamp() {
+ if expire_at.timestamp() < Utc::now().timestamp() {
      return Err(());
  }
 
