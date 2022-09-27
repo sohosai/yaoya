@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::slack::model::{message::ActionElement};
+use crate::slack::model::message::ActionElement;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
