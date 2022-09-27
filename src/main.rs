@@ -5,6 +5,7 @@ use anyhow::Result;
 mod filters;
 mod handlers;
 mod model;
+mod negicloud;
 mod slack;
 
 #[tokio::main]
