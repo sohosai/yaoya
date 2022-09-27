@@ -38,6 +38,6 @@ impl TryFrom<HashMap<String, String>> for CommandInput {
 
 fn get_field(map: &HashMap<String, String>, field: &str) -> Result<String, CommandInputError> {
     map.get(field)
-    .ok_or_else(|| CommandInputError::MissingRequiredField(field.to_string()))
+        .ok_or_else(|| CommandInputError::MissingRequiredField(field.to_string()))
         .map(|s| s.to_string())
 }
