@@ -33,3 +33,10 @@ sequenceDiagram
     yaoya->>slack: default password
 ```
 
+
+
+## Installation
+
+```zsh
+docker run  --env-file .env yaoya:latest 
+```
