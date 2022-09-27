@@ -30,9 +30,6 @@ pub async fn post_message(token: &str, channel: &str, message: Message) -> Resul
     if res.status().is_success() {
         Ok(())
     } else {
-        Err(Error::SlackApiError(
-            res.status().as_u16(),
-            res.text().await?,
-        ))
+        Err(Error::SlackApi(res.status().as_u16(), res.text().await?))
     }
 }

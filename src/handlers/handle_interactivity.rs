@@ -53,7 +53,7 @@ pub async fn handle_interactivity(
             response_url,
             ..
         } => {
-            let mut response_message = "".to_string();
+            let response_message;
 
             if actions.len() != 1 {
                 return Ok(warp::reply::with_status(
@@ -95,15 +95,11 @@ pub async fn handle_interactivity(
                 }
             }
 
-            return Ok(warp::reply::with_status(
+            Ok(warp::reply::with_status(
                 warp::reply(),
                 respond(&response_message, &response_url).await,
-            ));
+            ))
         }
-        _ => Ok(warp::reply::with_status(
-            warp::reply::reply(),
-            warp::http::StatusCode::BAD_REQUEST,
-        )),
     }
 }
 

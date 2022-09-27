@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::slack::model::{message::ActionElement};
+use crate::slack::model::message::ActionElement;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
@@ -16,7 +16,7 @@ pub enum Interactivity {
     },
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     id: String,
     username: String,

@@ -61,7 +61,7 @@ pub async fn register_user(
         let text = res
             .text()
             .await
-            .unwrap_or("Failed to stringify".to_string());
+            .unwrap_or_else(|_| "Failed to stringify".to_string());
         if text.contains("<statuscode>102</statuscode>") {
             //TODO: PARSE XML
             error!("Duplicate. {}", text);
@@ -75,7 +75,7 @@ pub async fn register_user(
             res.status().as_u16(),
             res.text()
                 .await
-                .unwrap_or("<Failed to stringify>".to_string()),
+                .unwrap_or_else(|_| "<Failed to stringify>".to_string()),
         ))
     }
 }

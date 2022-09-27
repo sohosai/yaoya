@@ -11,7 +11,6 @@ use sendgrid::SendgridError;
 use sendgrid::{Mail, SGClient};
 use thiserror::Error;
 
-
 #[derive(Debug, Error)]
 pub enum SignupError {
     #[error("Slack api error {0}")]

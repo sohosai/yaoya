@@ -39,7 +39,7 @@ pub async fn verify_email(
         params.email, params.real_name, params.user_id
     );
 
-    if let Err(_)=verify_token(&params.token, params.iat, &params.email, &config){
+    if verify_token(&params.token, params.iat, &params.email, &config).is_err() {
         return Ok(
             warp::reply::html(generate_html("Error", "Invalid token Bad request)", "アクセストークンが無効であるか、失効しています。メールアドレスの確認は、メールの送信から5分以内に行なってください。"))
         );
