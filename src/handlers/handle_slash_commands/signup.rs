@@ -93,7 +93,7 @@ pub async fn send_verification_email(
     let mail = Mail::new()
         .add_from(&config.email_from)
         .add_text(&mail_content)
-        .add_subject("Hello")
+        .add_subject("negicloudへのユーザ登録を完了してください")
         .add_to((email, email).into());
 
     SGClient::new(&config.sendgrid_token).send(mail).await?;
