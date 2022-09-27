@@ -86,7 +86,7 @@ pub async fn handle_interactivity(
                     groups: vec!["実委人".to_string()],
                 };
 
-                std::thread::spawn(move || async {
+                tokio::spawn(async move {
                     let msg = match negicloud::register_user(&config, params).await {
                         Ok(_) => "ユーザが発行されました。メールを確認してください。",
                         Err(e) => {
