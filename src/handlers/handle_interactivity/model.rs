@@ -16,7 +16,7 @@ pub enum Interactivity {
     },
 }
 
-#[derive(Debug, Clone, PartialEq,Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     id: String,
     username: String,
