@@ -95,10 +95,10 @@ pub async fn handle_interactivity(
                 }
             }
 
-            return Ok(warp::reply::with_status(
+            Ok(warp::reply::with_status(
                 warp::reply(),
                 respond(&response_message, &response_url).await,
-            ));
+            ))
         }
     }
 }
