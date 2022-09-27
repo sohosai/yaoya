@@ -80,7 +80,7 @@ pub async fn handle_interactivity(
                 real_name,
             } => {
                 let params = negicloud::RegisterUserParams {
-                    userid: real_name.to_string(),
+                    userid: real_name,
                     password: "".to_string(),
                     email,
                     groups: vec!["実委人".to_string()],
