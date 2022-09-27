@@ -10,7 +10,7 @@ use chrono::Utc;
 use sendgrid::SendgridError;
 use sendgrid::{Mail, SGClient};
 use thiserror::Error;
-use urlencoding::encode;
+
 
 #[derive(Debug, Error)]
 pub enum SignupError {

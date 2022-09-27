@@ -69,12 +69,12 @@ pub async fn handle_interactivity(
             match &actions[0] {
                 ActionElement::Button {
                     action_id,
-                    text,
+                    text: _,
                     value,
-                    style,
+                    style: _,
                 } => {
                     if action_id.contains("continue") {
-                        match register(&config, &value).await {
+                        match register(&config, value).await {
                             Ok(_) => {
                                 response_message =
                                     "ユーザが発行されました。メールを確認してください。"
@@ -123,27 +123,27 @@ async fn register(config: &Config, prop_str: &str) -> Result<(), String> {
 
     match props {
         InteractiveComponentValue::IsRealnameCorrectPromptAnswer {
-            token,
+            token: _,
             email,
-            iat,
-            user_id,
+            iat: _,
+            user_id: _,
             real_name,
         } => {
             let params = negicloud::RegisterUserParams {
                 userid: real_name.to_string(),
                 password: "".to_string(),
-                email: email,
+                email,
                 groups: vec!["実委人".to_string()],
             };
 
-            match negicloud::register_user(&config, params).await {
-                Ok(_) => return Ok(()),
+            match negicloud::register_user(config, params).await {
+                Ok(_) => Ok(()),
                 Err(e) => {
                     error!("{}", e);
-                    return Err(
+                    Err(
                         "エラー。リクエストは有効ですが、negicloudとの通信に失敗しました。"
                             .to_string(),
-                    );
+                    )
                 }
             }
         }

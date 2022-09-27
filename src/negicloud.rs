@@ -14,7 +14,7 @@ pub struct RegisterUserParams {
 impl RegisterUserParams {
     pub fn to_hashmap(&self) -> HashMap<String, String> {
         let mut map = HashMap::from([
-            ("userid".to_string(), self.userid.to_string().to_owned()),
+            ("userid".to_string(), self.userid.to_string()),
             ("email".to_string(), self.email.to_string()),
             ("password".to_string(), self.password.to_string()),
         ]);
