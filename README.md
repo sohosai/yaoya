@@ -38,5 +38,5 @@ sequenceDiagram
 ## Installation
 
 ```zsh
-docker run  --env-file .env yaoya:latest 
+docker run  --env-file=.env --name=yaoya -p 3030:3030 -d ghcr.io/sohosai/yaoya:latest 
 ```
