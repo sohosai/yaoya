@@ -5,6 +5,7 @@ use crate::slack::model::{
     Message,
 };
 use crate::slack::post_message::post_message;
+use crate::verify_token;
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
 
@@ -37,6 +38,12 @@ pub async fn verify_email(
         "Email {} is verified for user {}({})",
         params.email, params.real_name, params.user_id
     );
+
+    if let Err(_)=verify_token(&params.token, params.iat, &params.email, &config){
+        return Ok(
+            warp::reply::html(generate_html("Error", "Invalid token Bad request)", "アクセストークンが無効であるか、失効しています。メールアドレスの確認は、メールの送信から5分以内に行なってください。"))
+        );
+    }
 
     let message = match Username::try_from(params.real_name.as_str()) {
         Ok(username) => match username_to_confirmation_message(username, &params) {
