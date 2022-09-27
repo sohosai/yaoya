@@ -41,7 +41,7 @@ pub async fn register_user(
     config: &Config,
     params: RegisterUserParams,
 ) -> Result<(), RegisterUserError> {
-    let s = format!("https://{}/ocs/v1.php/cloud/users", config.negicloud_host);
+    let s = format!("{}/users", config.negicloud_base);
 
     info!("{}", s);
 

@@ -26,10 +26,7 @@ pub async fn handle_interactivity(
         }
         Err(e) => {
             println!("{:?}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::reply(),
-                warp::http::StatusCode::BAD_REQUEST,
-            ));
+            return Ok("エラーが発生しました。Payload Parse error");
         }
     };
 
@@ -40,134 +37,92 @@ pub async fn handle_interactivity(
         }
         Err(e) => {
             println!("JSON parse error {}", e);
-            return Ok(warp::reply::with_status(
-                warp::reply::reply(),
-                warp::http::StatusCode::BAD_REQUEST,
-            ));
+            return Ok("エラーが発生しました。JSON Parse error");
         }
     };
 
-    match props {
+    let (actions, response_url) = match props {
         model::Interactivity::BlockActions {
             actions,
             response_url,
             ..
-        } => {
-            let response_message;
-
-            if actions.len() != 1 {
-                return Ok(warp::reply::with_status(
-                    warp::reply(),
-                    respond(
-                        "不正な操作を検知しました。. actions.len != 1.",
-                        &response_url,
-                    )
-                    .await,
-                ));
-            }
-
-            match &actions[0] {
-                ActionElement::Button {
-                    action_id,
-                    text: _,
-                    value,
-                    style: _,
-                } => {
-                    if action_id.contains("continue") {
-                        match register(&config, value).await {
-                            Ok(_) => {
-                                response_message =
-                                    "ユーザが発行されました。メールを確認してください。"
-                                        .to_string();
-                            }
-                            Err(e) => {
-                                response_message = e;
-                            }
-                        }
-                    } else if action_id.contains("cancel") {
-                        response_message =
-                            "操作をキャンセルしました。訂正してから再度操作を行ってください。"
-                                .to_string();
-                    } else {
-                        response_message =
-                            "不正な操作を検知しました。 Unknown action_id.".to_string()
-                    }
-                }
-            }
-
-            Ok(warp::reply::with_status(
-                warp::reply(),
-                respond(&response_message, &response_url).await,
-            ))
-        }
-    }
-}
-
-async fn register(config: &Config, prop_str: &str) -> Result<(), String> {
-    let props = match serde_json::from_str::<InteractiveComponentValue>(prop_str) {
-        Ok(param) => {
-            info!("Interactivity payload JSON parsed");
-            param
-        }
-        Err(e) => {
-            println!("JSON parse error {}", e);
-            return Err(
-                "不正な操作を検出しました。 Interactiviy payload JSON parse error.".to_string(),
-            );
-        }
+        } => (actions, response_url),
     };
 
-    match props {
-        InteractiveComponentValue::IsRealnameCorrectPromptAnswer {
-            token: _,
-            email,
-            iat: _,
-            user_id: _,
-            real_name,
-        } => {
-            let params = negicloud::RegisterUserParams {
-                userid: real_name.to_string(),
-                password: "".to_string(),
-                email,
-                groups: vec!["実委人".to_string()],
-            };
+    if actions.len() != 1 {
+        return Ok("不正な操作を検知しました。. actions.len != 1.");
+    }
 
-            match negicloud::register_user(config, params).await {
-                Ok(_) => Ok(()),
-                Err(e) => {
-                    error!("{}", e);
-                    Err(
-                        "エラー。リクエストは有効ですが、negicloudとの通信に失敗しました。"
-                            .to_string(),
-                    )
-                }
+    let (action_id, value) = match &actions[0] {
+        ActionElement::Button {
+            action_id, value, ..
+        } => (action_id.to_string(), value.to_string()),
+    };
+
+    if action_id.contains("continue") {
+        let props = match serde_json::from_str::<InteractiveComponentValue>(&value) {
+            Ok(param) => {
+                info!("Interactivity payload JSON parsed");
+                param
+            }
+            Err(e) => {
+                println!("JSON parse error {}", e);
+                return Ok("不正な操作を検出しました。 Interactiviy payload JSON parse error.");
+            }
+        };
+
+        match props {
+            InteractiveComponentValue::IsRealnameCorrectPromptAnswer {
+                token: _,
+                email,
+                iat: _,
+                user_id: _,
+                real_name,
+            } => {
+                let params = negicloud::RegisterUserParams {
+                    userid: real_name,
+                    password: "".to_string(),
+                    email,
+                    groups: vec!["実委人".to_string()],
+                };
+
+                tokio::spawn(async move {
+                    let msg = match negicloud::register_user(&config, params).await {
+                        Ok(_) => "ユーザが発行されました。メールを確認してください。",
+                        Err(e) => {
+                            error!("{}", e);
+                            "エラー。リクエストは有効ですが、negicloudとの通信に失敗しました。"
+                        }
+                    };
+
+                    respond(msg, response_url, config).await
+                });
+
+                Ok("")
             }
         }
+    } else if action_id.contains("cancel") {
+        Ok("操作を中止しました。訂正して、はじめからやり直してください。")
+    } else {
+        Ok("不正な操作を検知しました。 Unknown action_id.")
     }
 }
 
-pub async fn respond(text: &str, url: &str) -> warp::http::StatusCode {
+async fn respond(msg: &str, response_url: String, config: Config) {
     let client = reqwest::Client::new();
     let res = client
-        .post(url)
+        .post(response_url)
         .header("Content-Type", "application/json")
-        .body(format!("{{\"text\":\"{}\"}}", text))
+        .header(
+            "Authorization",
+            format!("Bearer {}", config.slack_bot_token),
+        )
+        .body(format!("{{\"text\":\"{}\"}}", msg))
         .send()
         .await;
 
     match res {
-        Ok(res) => {
-            info!("Response sent");
-            if res.status().is_success() {
-                warp::http::StatusCode::OK
-            } else {
-                info!("Response failed");
-                warp::http::StatusCode::BAD_REQUEST
-            }
-        }
-        Err(e) => {
-            info!("Response send error: {}", e);
-            warp::http::StatusCode::INTERNAL_SERVER_ERROR
-        }
+        Ok(_) => info!("Response sent"),
+        Err(e) => error!("Response failed: {}", e),
     }
 }

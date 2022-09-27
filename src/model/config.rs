@@ -8,7 +8,7 @@ pub struct Config {
     pub my_baseurl: String,
     pub verify_salt: String,
     pub email_from: String,
-    pub negicloud_host: String,
+    pub negicloud_base: String,
     pub negicloud_admin_user: String,
     pub negicloud_admin_password: String,
 }
