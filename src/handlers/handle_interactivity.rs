@@ -100,10 +100,6 @@ pub async fn handle_interactivity(
                 respond(&response_message, &response_url).await,
             ));
         }
-        _ => Ok(warp::reply::with_status(
-            warp::reply::reply(),
-            warp::http::StatusCode::BAD_REQUEST,
-        )),
     }
 }
 
