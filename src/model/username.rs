@@ -34,7 +34,7 @@ impl TryFrom<&str> for Username {
         }
 
         let year = &value[0..2];
-        if !year.chars().all(|c| c.is_digit(10)) {
+        if !year.chars().all(|c| c.is_ascii_digit()) {
             return Err(UsernameError::MissingYear);
         }
 
