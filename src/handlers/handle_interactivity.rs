@@ -41,8 +41,12 @@ pub async fn handle_interactivity(
         }
     };
 
-    let actions = match props {
-        model::Interactivity::BlockActions { actions, .. } => actions,
+    let (actions, response_url) = match props {
+        model::Interactivity::BlockActions {
+            actions,
+            response_url,
+            ..
+        } => (actions, response_url),
     };
 
     if actions.len() != 1 {
@@ -82,18 +86,43 @@ pub async fn handle_interactivity(
                     groups: vec!["実委人".to_string()],
                 };
 
-                match negicloud::register_user(&config, params).await {
-                    Ok(_) => Ok("ユーザが発行されました。メールを確認してください。"),
-                    Err(e) => {
-                        error!("{}", e);
-                        Ok("エラー。リクエストは有効ですが、negicloudとの通信に失敗しました。")
-                    }
-                }
+                std::thread::spawn(move || async {
+                    let msg = match negicloud::register_user(&config, params).await {
+                        Ok(_) => "ユーザが発行されました。メールを確認してください。",
+                        Err(e) => {
+                            error!("{}", e);
+                            "エラー。リクエストは有効ですが、negicloudとの通信に失敗しました。"
+                        }
+                    };
+
+                    respond(msg, response_url, config).await
+                });
+
+                Ok("")
             }
         }
     } else if action_id.contains("cancel") {
         Ok("操作を中止しました。訂正して、はじめからやり直してください。")
     } else {
         Ok("不正な操作を検知しました。 Unknown action_id.")
+    }
+}
+
+async fn respond(msg: &str, response_url: String, config: Config) {
+    let client = reqwest::Client::new();
+    let res = client
+        .post(response_url)
+        .header("Content-Type", "application/json")
+        .header(
+            "Authorization",
+            format!("Bearer {}", config.slack_bot_token),
+        )
+        .body(format!("{{\"text\":\"{}\"}}", msg))
+        .send()
+        .await;
+
+    match res {
+        Ok(_) => info!("Response sent"),
+        Err(e) => error!("Response failed: {}", e),
     }
 }
