@@ -7,6 +7,8 @@ mod handlers;
 mod model;
 mod negicloud;
 mod slack;
+mod token;
+pub use token::verify_token;
 
 #[tokio::main]
 async fn main() -> Result<()> {
