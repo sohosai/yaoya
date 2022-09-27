@@ -84,10 +84,9 @@ pub async fn send_verification_email(
     let token = hmac_sha256::Hash::hash(token_basestring.as_bytes());
     let token = hex::encode(token);
 
-    let email_encoded = encode(email).to_string();
     let url = format!(
         "{}verify?token={}&email={}&iat={}&user_id={}&real_name={}",
-        config.my_baseurl, token, email_encoded, iat, user_id, real_name
+        config.my_baseurl, token, email, iat, user_id, real_name
     );
 
     let mail_content = format!("negicloudご利用者様\n 日頃よりnegicloudご利用いただきありがとうございます。以下のリンクに移動して、メールアドレスを確認してください。\n {}",url);
