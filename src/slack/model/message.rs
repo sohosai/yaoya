@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum Message {
     Text(String),
@@ -8,7 +8,7 @@ pub enum Message {
     Blocks(Vec<Block>),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum Block {
     #[serde(rename = "section")]
@@ -17,7 +17,7 @@ pub enum Block {
     Actions { elements: Vec<ActionElement> },
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum ActionElement {
     #[serde(rename = "button")]
@@ -30,14 +30,14 @@ pub enum ActionElement {
     },
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "snake_case")]
 pub enum ButtonStyle {
     Primary,
     Danger,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum Text {
     #[serde(rename = "plain_text")]
